@@ -1,6 +1,7 @@
 # Parameterized Interpolated SQL Queries
 
 String interpolation + SQL queries = good user experience + sql injection
+
 paramaterization + SQL queries = bad user expereicen + safety
 
 ## Why not the best of both worlds?
