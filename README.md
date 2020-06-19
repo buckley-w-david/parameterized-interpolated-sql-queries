@@ -4,6 +4,8 @@ String interpolation + SQL queries = good user experience (😊) + sql injection
 
 paramaterization + SQL queries = bad user experience (😞) + safety (😊)
 
+The main issue is the bad version (string interpolation) is the natural way to express the idea you're trying to get across, the "correct" way is much less obvious.
+
 ## Why not the best of both worlds?
 
 By (ab)using the `inspect` and `ast` modules, we can have the ease of use of string interpolation AND the safety of paramaterized queries!
