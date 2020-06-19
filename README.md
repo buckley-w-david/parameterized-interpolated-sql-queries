@@ -26,7 +26,7 @@ z = 3
 cursor.execute("INSERT INTO users (col1, col2, col3) VALUES (?, ?, ?)", [x, y, z])
 ```
 
-Paramaterized query with (almost) string interpolation sytax)
+Paramaterized query with (almost) string interpolation sytax (Best?)
 ```python
 f=paramaterize_interpolated_querystring
 
