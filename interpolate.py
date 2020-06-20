@@ -1,39 +1,49 @@
 import inspect
 import ast, _ast
 
-import sqlite3
-
-db_conn = sqlite3.connect(":memory:")
-
 def paramaterize_interpolated_querystring(query, placeholder='?'):
     frame = inspect.currentframe()
     outer_frame = inspect.getouterframes(frame)[1]
     tree = ast.parse(f"f'{query}'")
     values = tree.body[0].value.values
+    possible_query_values = {**globals(), **outer_frame.frame.f_locals}
 
-    paramaterized_query = ''
+    paramaterized_query = []
     query_values = []
     for node in values:
         if isinstance(node, _ast.Constant):
-            paramaterized_query += node.value
+            paramaterized_query.append(node.value)
         elif isinstance(node, _ast.FormattedValue):
-            paramaterized_query += placeholder
-            query_value = outer_frame.frame.f_locals[node.value.id]
+            paramaterized_query.append(placeholder)
+
+            query_value = possible_query_values[node.value.id]
             query_values.append(query_value)
 
-    return (paramaterized_query, query_values)
+    return (''.join(paramaterized_query), query_values)
 
-f=paramaterize_interpolated_querystring
+def paramaterize_interpolated_querystring_spicy(query, placeholder='?'):
+    frame = inspect.currentframe()
+    outer_frame = inspect.getouterframes(frame)[1]
+    tree = ast.parse(f"f'{query}'")
+    values = tree.body[0].value.values
 
-cursor = db_conn.cursor()
-cursor.execute('''CREATE TABLE users (col1 int, col2 int, col3 int)''')
+    temp_name = '__paramaterize_interpolated_querystring_spicy_temp'
 
-x = 1
-y = 2
-z = 3
+    assign = ast.parse(f'{temp_name} = 0')
 
-cursor.execute(*f("INSERT INTO users (col1, col2, col3) VALUES ({x}, {y}, {z})"))
-db_conn.commit()
+    paramaterized_query = []
+    query_values = []
+    for node in values:
+        if isinstance(node, _ast.Constant):
+            paramaterized_query.append(node.value)
+        elif isinstance(node, _ast.FormattedValue):
+            paramaterized_query.append(placeholder)
 
-cursor.execute("SELECT * FROM users")
-print(cursor.fetchone())
+            # This may be the most cursed code I have ever written
+            assign.body[0].value = node.value
+            assign = ast.fix_missing_locations(assign)
+            exec(compile(assign, '<string>', 'exec'), globals(), outer_frame.frame.f_locals)
+
+            query_values.append(outer_frame.frame.f_locals[temp_name])
+
+    return (''.join(paramaterized_query), query_values)
