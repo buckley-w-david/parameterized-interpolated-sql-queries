@@ -1,6 +1,6 @@
 import interpolate
 
-f = interpolate.paramaterize_interpolated_querystring_spicy
+f = interpolate.parameterize_interpolated_querystring_spicy
 
 x = 1
 y = 2

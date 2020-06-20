@@ -1,7 +1,7 @@
 import inspect
 import ast, _ast
 
-def paramaterize_interpolated_querystring(query, placeholder='?'):
+def parameterize_interpolated_querystring(query, placeholder='?'):
     frame = inspect.currentframe()
     outer_frame = inspect.getouterframes(frame)[1]
     tree = ast.parse(f"f'{query}'")
@@ -21,13 +21,13 @@ def paramaterize_interpolated_querystring(query, placeholder='?'):
 
     return (''.join(paramaterized_query), query_values)
 
-def paramaterize_interpolated_querystring_spicy(query, placeholder='?'):
+def parameterize_interpolated_querystring_spicy(query, placeholder='?'):
     frame = inspect.currentframe()
     outer_frame = inspect.getouterframes(frame)[1]
     tree = ast.parse(f"f'{query}'")
     values = tree.body[0].value.values
 
-    temp_name = '__paramaterize_interpolated_querystring_spicy_temp'
+    temp_name = '__parameterize_interpolated_querystring_spicy_temp'
 
     assign = ast.parse(f'{temp_name} = 0')
 

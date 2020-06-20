@@ -3,7 +3,7 @@ import interpolate
 
 db_conn = sqlite3.connect(":memory:")
 
-f=interpolate.paramaterize_interpolated_querystring
+f=interpolate.parameterize_interpolated_querystring
 
 cursor = db_conn.cursor()
 cursor.execute('''CREATE TABLE users (col1 int, col2 int, col3 int)''')
