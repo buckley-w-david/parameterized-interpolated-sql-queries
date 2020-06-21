@@ -52,7 +52,7 @@ def parameterize_interpolated_querystring(query, placeholder='?'):
 
     # We create a dummy assignment AST tree so that we can extract
     # the result of our computation
-    temp_name = '__parameterize_interpolated_querystring_spicy_temp'
+    temp_name = '__parameterize_interpolated_querystring_temp'
     assign = ast.fix_missing_locations(ast.parse(f'{temp_name} = 0'))
 
     paramaterized_query = []
