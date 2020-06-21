@@ -1,7 +1,11 @@
 import inspect
 import ast, _ast
+import json
 
 # Old "safer" version that only attempts to look up variable names
+# The f-string generation is vulnerable to injection itself (How ironic)
+# because at the time I did not account for strings that themselves contained
+# the quote character I used (').
 # def parameterize_interpolated_querystring(query, placeholder='?'):
 #     frame = inspect.currentframe()
 #     outer_frame = inspect.getouterframes(frame)[1]
@@ -25,7 +29,15 @@ import ast, _ast
 def parameterize_interpolated_querystring(query, placeholder='?'):
     # Create an f-string AST tree of the query
     # This is done to avoid having to write crappy f-string parsing logic
-    tree = ast.fix_missing_locations(ast.parse(f"f'{query}'"))
+    # We also run it through json.dumps so that all quotes are escaped correctly
+    #
+    # This is to prevent strings containing the quote character I would have otherwise used to
+    # construct the f-string from breaking the parsing by ending the string
+    # (Much like an SQL injection)
+    tree = ast.fix_missing_locations(ast.parse(f'f{json.dumps(query)}'))
+    if not isinstance(tree.body[0].value, _ast.JoinedStr):
+        raise ValueError("You've found a way to break my string parsing")
+
     values = tree.body[0].value.values
 
     frame = inspect.currentframe()
